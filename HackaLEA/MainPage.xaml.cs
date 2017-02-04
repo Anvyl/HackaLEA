@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -25,6 +27,20 @@ namespace HackaLEA
         public MainPage()
         {
             this.InitializeComponent();
+			this.Loaded += MainPage_Loaded;
         }
-    }
+
+		private void MainPage_Loaded(object sender, RoutedEventArgs e)
+		{
+			BluetoothLEAdvertisementWatcher watcher = new BluetoothLEAdvertisementWatcher();
+			watcher.Received += AdvertismentReceived;
+			watcher.ScanningMode = BluetoothLEScanningMode.Active;
+			watcher.Start();
+		}
+
+		private void AdvertismentReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+		{
+			Debug.WriteLine($"Received, Signal Power: {args.RawSignalStrengthInDBm}, UUID: {args.Advertisement.LocalName}");
+		}
+	}
 }
