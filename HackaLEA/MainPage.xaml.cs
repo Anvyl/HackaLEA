@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
@@ -21,12 +24,10 @@ using Windows.UI.Xaml.Navigation;
 
 namespace HackaLEA
 {
-
-
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainPage : Page
+	/// <summary>
+	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// </summary>
+	public sealed partial class MainPage : Page
     {
         public MainPage()
         {
@@ -38,10 +39,13 @@ namespace HackaLEA
 		{
 			BluetoothLEAdvertisementWatcher watcher = new BluetoothLEAdvertisementWatcher();
 			watcher.Received += AdvertismentReceived;
-			watcher.SignalStrengthFilter.SamplingInterval = TimeSpan.FromMilliseconds(0);
 			watcher.ScanningMode = BluetoothLEScanningMode.Active;
+			watcher.SignalStrengthFilter.SamplingInterval = TimeSpan.FromMilliseconds(20);
 			watcher.Start();
 		}
+
+		Dictionary<string, BeaconInfo> Samples = new Dictionary<string, BeaconInfo>();
+		private object _lockObject = new object();
 
 		private async void AdvertismentReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
 		{
@@ -58,34 +62,43 @@ namespace HackaLEA
 					var major = BitConverter.ToUInt16(bytes.Skip(18).Take(2).Reverse().ToArray(), 0);
 					var minor = BitConverter.ToUInt16(bytes.Skip(20).Take(2).Reverse().ToArray(), 0);
 					var power = (short)(sbyte)bytes[22];
-					if (guid.ToString().StartsWith("c336aa3"))
+					var id = guid.ToString() + minor;
+					if (id.StartsWith("c"))
 					{
-						Debug.WriteLine(guid);
-						Debug.WriteLine($"{ComputeDistance(args.RawSignalStrengthInDBm, power),2}");
-						if(minor == 101)
+						if(Samples.ContainsKey(id))
 						{
-							await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+							var beacon = Samples[id];
+							if (beacon.Samples.Count < 10)
+								beacon.Samples.Add(args.RawSignalStrengthInDBm);
+							else
 							{
-								//DistanceLabelA.Text = $"A distance: {ComputeDistance(args.RawSignalStrengthInDBm, power),2}";
-								ProximityA.Text = $"A proximity: {args.RawSignalStrengthInDBm}";
-							});
+								beacon.Samples.RemoveAt(0);
+								beacon.Samples.Add(args.RawSignalStrengthInDBm);
+								await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+								{
+									var mean = beacon.Samples.Average(x => x);
+									if(beacon.Minor == 101)
+									{
+										DistanceLabelA.Text = $"d({beacon.Minor}) = {ComputeDistance(mean, beacon.Power).ToString("0.00")}";
+										ProximityA.Text = $"rssi({beacon.Minor}) = {mean.ToString("0.00")}";
+									}
+									else if (beacon.Minor == 102)
+									{
+										DistanceLabelB.Text = $"d({beacon.Minor}) = {ComputeDistance(mean, beacon.Power).ToString("0.00")}";
+										ProximityB.Text = $"rssi({beacon.Minor}) = {mean.ToString("0.00")}";
+									}
+									else if (beacon.Minor == 103)
+									{
+										DistanceLabelC.Text = $"d({beacon.Minor}) = {ComputeDistance(mean, beacon.Power).ToString("0.00")}";
+										ProximityC.Text = $"rssi({beacon.Minor}) = {mean.ToString("0.00")}";
+									}
+								});
+							}
 						}
-						else if (minor == 102)
-						{
-							await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-							{
-								//DistanceLabelB.Text = $"B distance: {ComputeDistance(args.RawSignalStrengthInDBm, power),2}";
-								ProximityB.Text = $"B proximity: {args.RawSignalStrengthInDBm}";
-							});
-						}
-						else if (minor == 103)
-						{
-							await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-							{
-								//DistanceLabelC.Text = $"C distance: {ComputeDistance(args.RawSignalStrengthInDBm, power),2}";
-								ProximityC.Text = $"C proximity: {args.RawSignalStrengthInDBm}";
-							});
-						}
+						else
+							lock(_lockObject)
+								Samples.Add(id, new BeaconInfo { Guid = guid, Minor = minor, Power = power, Samples = new List<short> { args.RawSignalStrengthInDBm } } );
+						
 					}
 				}
 			}
