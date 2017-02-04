@@ -8,6 +8,13 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+			<TextBlock x:Name="DistanceLabelA" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
+			<TextBlock x:Name="DistanceLabelB" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
+			<TextBlock x:Name="DistanceLabelC" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
+			<TextBlock x:Name="ProximityA" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
+			<TextBlock x:Name="ProximityB" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
+			<TextBlock x:Name="ProximityC" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
+		</StackPanel>
     </Grid>
 </Page>
