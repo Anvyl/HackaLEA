@@ -10,7 +10,8 @@ namespace HackaLEA
 		public Guid Guid { get; set; }
 		public string Id => Guid.ToString() + Minor;
 		public ushort Minor { get; set; }
-		public short Power { get; set; }
+		public short TxPower { get; set; }
+		public short PracticalPower { get; set; }
 		public List<double> Signals { get; set; }
 		public double SignalPower { get; set; } = 0;
 		public (double x, double y) Position { get; set; }

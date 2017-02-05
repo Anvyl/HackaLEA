@@ -7,15 +7,41 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<TextBlock x:Name="OverallPosition" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20"> </TextBlock>
-		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+	<Grid x:Name="GridContainer" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="20">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition Height="2*"/>
+		</Grid.RowDefinitions>
+
+
+		<Border x:Name="Room101" Grid.Row="1" Grid.Column="0" BorderThickness="2" BorderBrush="Black" Margin="2"></Border>
+		<Border x:Name="Room102" Grid.Row="0" Grid.Column="0" BorderThickness="2" BorderBrush="Black" Margin="2"></Border>
+		<Border x:Name="Room103" Grid.Row="0" Grid.Column="1" BorderThickness="2" BorderBrush="Black" Margin="2"></Border>
+		<Border x:Name="Room104" Grid.Row="0" Grid.Column="2" BorderThickness="2" BorderBrush="Black" Margin="2"></Border>
+		<Border x:Name="Room105" Grid.Row="0" Grid.Column="3" BorderThickness="2" BorderBrush="Black" Margin="2"></Border>
+		<Border x:Name="Room106" Grid.Row="1" Grid.Column="3" BorderThickness="2" BorderBrush="Black" Margin="2"></Border>
+
+		<!--<TextBlock x:Name="OverallPosition" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20"> </TextBlock>
+		<StackPanel Grid.Row="2" Grid.ColumnSpan="4" HorizontalAlignment="Center" VerticalAlignment="Center">
 			<TextBlock x:Name="DistanceLabelA" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
 			<TextBlock x:Name="DistanceLabelB" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
 			<TextBlock x:Name="DistanceLabelC" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
 			<TextBlock x:Name="ProximityA" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
 			<TextBlock x:Name="ProximityB" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
 			<TextBlock x:Name="ProximityC" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
-		</StackPanel>
+		</StackPanel>-->
+		<TextBlock x:Name="RoomName" 
+				   FontSize="29"
+				   Grid.ColumnSpan="4"
+				   HorizontalAlignment="Center" 
+				   VerticalAlignment="Center" 
+				   Grid.Row="2"></TextBlock>
     </Grid>
 </Page>
