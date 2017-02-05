@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<TextBlock x:Name="OverallPosition" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20"> </TextBlock>
 		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 			<TextBlock x:Name="DistanceLabelA" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
 			<TextBlock x:Name="DistanceLabelB" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
